@@ -36,6 +36,10 @@ impl Layout {
         &self.children
     }
 
+    pub fn first_child(&self) -> &Layout {
+        &self.children[0]
+    }
+
     pub fn move_to(&mut self, x: usize, y: usize) {
         self.rect.x += x;
         self.rect.y += y;

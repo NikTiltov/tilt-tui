@@ -29,12 +29,13 @@ impl<'a> Toggle<'a> {
 }
 
 impl<'a> Widget for Toggle<'a> {
-    fn size(&self) -> Size<Length> {
+    fn size(&self) -> Size<Len> {
         Size::min()
     }
 
-    fn layout(&self, _bound: Size) -> Layout {
-        Layout::new(Size::new(self.current_view().len(), 1))
+    fn layout(&self, limits: Limits) -> Layout {
+        let size = Size::new(self.current_view().len(), 1);
+        Layout::new(limits.clamp(size))
     }
 
     fn render(&self, layout: &Layout, canvas: &mut Canvas) {

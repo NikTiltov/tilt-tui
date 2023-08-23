@@ -7,7 +7,6 @@ pub fn panel(fill: char) -> Panel {
 pub struct Panel {
     fill: char,
     style: Style,
-    size: Size<Length>,
 }
 
 impl Panel {
@@ -15,17 +14,7 @@ impl Panel {
         Self {
             fill,
             style: Style::default(),
-            size: Size::max(),
         }
-    }
-
-    pub fn size(
-        mut self,
-        width: impl Into<Length>,
-        height: impl Into<Length>,
-    ) -> Self {
-        self.size = Size::new(width.into(), height.into());
-        self
     }
 
     pub fn style(mut self, style: Style) -> Self {
@@ -35,18 +24,12 @@ impl Panel {
 }
 
 impl Widget for Panel {
-    fn size(&self) -> Size<Length> {
-        self.size
+    fn size(&self) -> Size<Len> {
+        Size::min()
     }
 
-    fn layout(&self, bound: Size) -> Layout {
-        let len = |axis| match self.size.main(axis) {
-            Length::Var(var) => var,
-            Length::Max => bound.main(axis),
-            Length::Min => 0,
-        };
-        let size = Size::new(len(Axis::H), len(Axis::V));
-        Layout::new(size)
+    fn layout(&self, limits: Limits) -> Layout {
+        Layout::new(limits.clamp(Size::new(0, 0)))
     }
 
     fn render(&self, layout: &Layout, canvas: &mut Canvas) {

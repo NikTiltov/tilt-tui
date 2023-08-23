@@ -1,6 +1,10 @@
 use tilt_tui::prelude::*;
 
 fn main() {
+    let _ = simple_logging::log_to_file("log.log", log::LevelFilter::Debug);
+    std::panic::set_hook(Box::new(|info: &std::panic::PanicInfo| {
+        log::error!("{}", info);
+    }));
     Counter::new().run();
 }
 
@@ -27,94 +31,122 @@ The simple text of the text, with text. Apple of company maceboke.";
 
 impl App for Counter {
     fn view(&self) -> Element {
+        let key_event = text(format!("{:?}", self.key_event)).case();
+
+        let text_box = text(TEXT).case();
+
         let list = {
             let item = |name, marked| {
                 linear(Axis::H)
-                    .child(text(name).size(10, Min))
+                    .child(text(name).width(10))
                     .child(toggle(marked))
             };
             linear(Axis::V)
                 .child(item("item 1", true))
                 .child(item("item 2", self.marked))
                 .child(item("item 3", false))
-                .cased()
-                .borders(Borders::NORMAL)
+                .case()
         };
 
-        let align_text = || {
-            let text_box = |x, y| {
-                let h = match x {
-                    0 => Alignment::Start,
-                    1 => Alignment::Center,
-                    _ => Alignment::End,
-                };
-                let v = match y {
-                    0 => Alignment::Start,
-                    1 => Alignment::Center,
-                    _ => Alignment::End,
-                };
-                text("qwe\nrtyui")
-                    .size(Max, Max)
-                    .align_h(h)
-                    .align_v(v)
-                    .cased()
-                    .borders(Borders::NORMAL)
-            };
-
-            let row = move |y| {
-                linear(Axis::H)
-                    .size(Max, Max)
-                    .child(text_box(0, y))
-                    .child(text_box(1, y))
-                    .child(text_box(2, y))
-                    .spacing(1)
-            };
-
-            linear(Axis::V)
-                .size(Max, Max)
-                .child(row(0))
-                .child(row(1))
-                .child(row(2))
-                .into()
-        };
-
-        let progress_bar = range(self.ratio)
-            .size(Max, 2)
-            .cased()
-            .borders(Borders::NORMAL);
-
-        let tab_view = |txt| {
-            text(txt)
-                .size(Max, Max)
-                .cased()
-                .borders(Borders::NORMAL)
-                .into()
-        };
+        let progress_bar = range(self.ratio).width(Max).height(2).case();
 
         let tabs = {
-            let view = match self.tab_id {
-                0 => align_text(),
-                1 => tab_view("2"),
-                _ => tab_view("3"),
+            let align_text = || {
+                let text_box = |x, y| {
+                    let h = match x {
+                        0 => Alignment::Start,
+                        1 => Alignment::Center,
+                        _ => Alignment::End,
+                    };
+                    let v = match y {
+                        0 => Alignment::Start,
+                        1 => Alignment::Center,
+                        _ => Alignment::End,
+                    };
+                    text("qwe\nrtyui")
+                        .align_h(h)
+                        .align_v(v)
+                        .width(Max)
+                        .height(Max)
+                        .case()
+                };
+
+                let row = move |y| {
+                    linear(Axis::H)
+                        .child(text_box(0, y))
+                        .child(text_box(1, y))
+                        .child(text_box(2, y))
+                        .spacing(1)
+                        .width(Max)
+                        .height(Max)
+                };
+
+                linear(Axis::V)
+                    .child(row(0))
+                    .child(row(1))
+                    .child(row(2))
+                    .width(Max)
+                    .height(Max)
+                    .into()
             };
-            tabs(self.tab_id, tab, ["Text alignment", "Tab 2", "Tab 3"], view)
-                .cased()
-                .borders(Borders::NORMAL)
+
+            let split_view = || {
+                let text_view = |name| {
+                    text(name)
+                        .align_h(Alignment::Center)
+                        .align_v(Alignment::Center)
+                        .width(Max)
+                        .height(Max)
+                };
+                split(
+                    Axis::H,
+                    text_view("left"),
+                    split(
+                        Axis::V,
+                        text_view("up"),
+                        split(
+                            Axis::H,
+                            split(
+                                Axis::V,
+                                text_view("center"),
+                                text_view("bottom"),
+                            ),
+                            text_view("right"),
+                        ),
+                    ),
+                )
+                .case()
+                .width(Max)
+                .height(Max)
+                .into()
+            };
+
+            let tab_view = || text("tab").width(Max).height(Max).case().into();
+
+            let view: Element = match self.tab_id {
+                0 => align_text(),
+                1 => split_view(),
+                _ => tab_view(),
+            };
+            tabs(
+                self.tab_id,
+                tab,
+                ["Text alignment", "Split view", "Tab 3"],
+                view,
+            )
+            .borders(Borders::BOLD)
+            .width(Max)
+            .height(Max)
         };
 
         linear(Axis::V)
-            .size(Max, Max)
-            .child(
-                text(format!("{:?}", self.key_event))
-                    .cased()
-                    .borders(Borders::NORMAL),
-            )
-            .child(text(TEXT).cased().borders(Borders::NORMAL))
+            .child(key_event)
+            .child(text_box)
             .child(list)
             .child(progress_bar)
             .child(tabs)
-            .cased()
-            .borders(Borders::NORMAL)
+            .width(Max)
+            .height(Max)
             .into()
     }
 

@@ -1,33 +1,22 @@
 use crate::prelude::*;
 
-pub fn vsplit<'a>(
-    first: impl Into<Element>,
-    second: impl Into<Element>,
-) -> Element {
-    split(Axis::V, first, second)
-}
-
-pub fn hsplit<'a>(
-    first: impl Into<Element>,
-    second: impl Into<Element>,
-) -> Element {
-    split(Axis::H, first, second)
-}
-
 pub fn split<'a>(
     axis: Axis,
     first: impl Into<Element>,
     second: impl Into<Element>,
 ) -> Element {
-    let (w, h) = Size::new(Var(1), Max).align(axis).into();
     let fill = match axis {
         Axis::H => '\u{02502}',
         Axis::V => '\u{02500}',
     };
+    let (w, h) = match axis {
+        Axis::H => (1, usize::MAX),
+        Axis::V => (usize::MAX, 1),
+    };
+
     linear(axis)
-        .size(Max, Max)
-        .child(first.into())
-        .child(panel(fill).size(w, h))
-        .child(second.into())
+        .child(first.width(Max).height(Max))
+        .child(panel(fill).width(w).height(h))
+        .child(second.width(Max).height(Max))
         .into()
 }

@@ -10,7 +10,7 @@ pub mod prelude {
         core::{App, Element, UpdateResult},
         elements::{components::*, widgets::*},
         events::*,
-        graphics::{Length::*, *},
+        graphics::{Len::*, *},
     };
 }
 

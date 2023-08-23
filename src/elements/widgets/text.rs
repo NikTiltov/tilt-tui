@@ -1,13 +1,3 @@
-mod line;
-mod span;
-mod text;
-
-pub use line::{line, Line};
-pub use span::{span, Span};
-pub use text::Text;
-
-pub type Grapheme = (char, crate::graphics::Style);
-
 use crate::{prelude::*, Widget};
 
 pub fn text<'a>(txt: impl Into<Text<'a>>) -> Textbox<'a> {
@@ -18,7 +8,6 @@ pub struct Textbox<'a> {
     content: Text<'a>,
     align_h: Alignment,
     align_v: Alignment,
-    size: Size<Length>,
     wrap: Wrap,
 }
 
@@ -28,7 +17,6 @@ impl<'a> Textbox<'a> {
             content: txt.into(),
             align_h: Alignment::Start,
             align_v: Alignment::Start,
-            size: Size::min(),
             wrap: Wrap::LetterWrap,
         }
     }
@@ -40,15 +28,6 @@ impl<'a> Textbox<'a> {
 
     pub fn align_v(mut self, align: Alignment) -> Self {
         self.align_v = align;
-        self
-    }
-
-    pub fn size(
-        mut self,
-        width: impl Into<Length>,
-        height: impl Into<Length>,
-    ) -> Self {
-        self.size = Size::new(width.into(), height.into());
         self
     }
 
@@ -64,28 +43,15 @@ impl<'a> Textbox<'a> {
 }
 
 impl<'a> Widget for Textbox<'a> {
-    fn size(&self) -> Size<Length> {
-        self.size
+    fn size(&self) -> Size<Len> {
+        Size::min()
     }
 
-    fn layout(&self, bound: Size) -> Layout {
-        let text = if self.size.w == Length::Min || self.size.h == Length::Min {
-            let width = self.size.w.var().unwrap_or(bound.w);
-            self.wrap.apply(&self.content, width)
-        } else {
-            Vec::new()
-        };
-        let width = match self.size.w {
-            Length::Var(var) => var,
-            Length::Max => bound.w,
-            Length::Min => text.iter().map(|line| line.len()).max().unwrap(),
-        };
-        let height = match self.size.h {
-            Length::Var(var) => var,
-            Length::Max => bound.h,
-            Length::Min => text.len(),
-        };
-        Layout::new(Size::new(width, height))
+    fn layout(&self, limits: Limits) -> Layout {
+        let text = self.wrap.apply(&self.content, limits.max.w);
+        let width = text.iter().map(|line| line.len()).max().unwrap();
+        let height = text.len();
+        Layout::new(limits.clamp(Size::new(width, height)))
     }
 
     fn render(&self, layout: &Layout, canvas: &mut Canvas) {

@@ -1,6 +1,6 @@
 use std::ops::Mul;
 
-use super::{Axis, Length};
+use super::{Axis, Len};
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct Size<T = usize> {
@@ -55,18 +55,25 @@ impl<T> From<Size<T>> for (T, T) {
     }
 }
 
+impl<T: Copy> From<(T, T)> for Size<T> {
+    fn from(tuple: (T, T)) -> Self {
+        let (w, h) = tuple;
+        Size::new(w, h)
+    }
+}
+
 impl<T: Mul<Output = T> + Copy> Size<T> {
     pub fn area(&self) -> T {
         self.w * self.h
     }
 }
 
-impl Size<Length> {
+impl Size<Len> {
     pub fn min() -> Self {
-        Self::new(Length::Min, Length::Min)
+        Self::new(Len::Min, Len::Min)
     }
 
     pub fn max() -> Self {
-        Self::new(Length::Max, Length::Max)
+        Self::new(Len::Max, Len::Max)
     }
 }

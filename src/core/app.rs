@@ -1,5 +1,6 @@
 use crate::{
     events::{Event, KeyEvent},
+    graphics::Limits,
     terminal::Terminal,
 };
 
@@ -18,9 +19,10 @@ pub trait App: Sized {
 
     fn run(mut self) {
         let mut terminal = Terminal::new();
+        let mut limits = Limits::from_max(terminal.size());
 
         let mut root = self.view();
-        let mut layout = root.layout(terminal.size().into());
+        let mut layout = root.layout(limits);
 
         let mut update = true;
         loop {
@@ -36,13 +38,14 @@ pub trait App: Sized {
                     UpdateResult::Idle => {}
                     UpdateResult::Update => {
                         root = self.view();
-                        layout = root.layout(terminal.size().into());
+                        layout = root.layout(limits);
                         update = true;
                     }
                     UpdateResult::Exit => break,
                 },
                 Event::Resize(size) => {
-                    layout = root.layout(size.into());
+                    limits = Limits::from_max(size);
+                    layout = root.layout(limits);
                     update = true;
                 }
             }

@@ -6,7 +6,6 @@ pub fn range(ratio: f64) -> Range {
 
 pub struct Range {
     ratio: f64,
-    size: Size<Length>,
     color: Color,
     axis: Axis,
 }
@@ -15,19 +14,9 @@ impl Range {
     pub fn new(ratio: f64) -> Self {
         Self {
             ratio: ratio.clamp(0.0, 1.0),
-            size: Size::new(Length::Max, Length::Max),
             color: Color::WHITE,
             axis: Axis::H,
         }
-    }
-
-    pub fn size(
-        mut self,
-        width: impl Into<Length>,
-        height: impl Into<Length>,
-    ) -> Self {
-        self.size = Size::new(width.into(), height.into());
-        self
     }
 
     pub fn axis(mut self, axis: Axis) -> Self {
@@ -42,16 +31,12 @@ impl Range {
 }
 
 impl Widget for Range {
-    fn size(&self) -> Size<Length> {
-        self.size
+    fn size(&self) -> Size<Len> {
+        Size::min()
     }
 
-    fn layout(&self, bound: Size) -> Layout {
-        let size = Size::new(
-            self.size.w.var().unwrap_or(bound.w),
-            self.size.h.var().unwrap_or(bound.h),
-        );
-        Layout::new(size)
+    fn layout(&self, limits: Limits) -> Layout {
+        Layout::new(limits.clamp(Size::new(0, 0)))
     }
 
     fn render(&self, layout: &Layout, canvas: &mut Canvas) {

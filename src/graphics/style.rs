@@ -27,4 +27,8 @@ impl Style {
             bg: self.bg.or(other.bg),
         }
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.bg.is_none() && self.fg.is_none()
+    }
 }

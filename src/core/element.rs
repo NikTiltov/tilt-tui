@@ -1,6 +1,6 @@
 use crate::{
     core::Widget,
-    graphics::{Canvas, Layout, Length, Size},
+    graphics::{Canvas, Layout, Len, Limits, Size},
 };
 
 pub struct Element {
@@ -8,12 +8,12 @@ pub struct Element {
 }
 
 impl Element {
-    pub fn size(&self) -> Size<Length> {
+    pub fn size(&self) -> Size<Len> {
         self.widget.size()
     }
 
-    pub fn layout(&self, bound: Size) -> Layout {
-        self.widget.layout(bound)
+    pub fn layout(&self, limits: Limits) -> Layout {
+        self.widget.layout(limits)
     }
 
     pub fn render(&self, layout: &Layout, canvas: &mut Canvas) {

@@ -7,12 +7,12 @@ pub fn empty() -> Empty {
 pub struct Empty;
 
 impl Widget for Empty {
-    fn size(&self) -> Size<Length> {
+    fn size(&self) -> Size<Len> {
         Size::min()
     }
 
-    fn layout(&self, _bound: Size) -> Layout {
-        Layout::new(Size::new(0, 0))
+    fn layout(&self, limits: Limits) -> Layout {
+        Layout::new(limits.clamp(Size::new(0, 0)))
     }
 
     fn render(&self, _layout: &Layout, _canvas: &mut Canvas) {}

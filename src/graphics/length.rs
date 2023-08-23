@@ -1,30 +1,22 @@
 #[derive(Clone, Copy, PartialEq, Eq)]
-pub enum Length {
+pub enum Len {
     Var(usize),
-    Min,
     Max,
+    Min,
 }
 
-impl Length {
+impl Len {
     pub fn is_flex(&self) -> bool {
-        matches!(self, Length::Max)
+        matches!(self, Self::Max)
     }
 
     pub fn is_fixed(&self) -> bool {
-        matches!(self, Length::Min | Length::Var(_))
-    }
-
-    pub fn var(self) -> Option<usize> {
-        if let Length::Var(value) = self {
-            Some(value)
-        } else {
-            None
-        }
+        matches!(self, Self::Var(_) | Self::Min)
     }
 }
 
-impl From<usize> for Length {
+impl From<usize> for Len {
     fn from(value: usize) -> Self {
-        Length::Var(value)
+        Len::Var(value)
     }
 }

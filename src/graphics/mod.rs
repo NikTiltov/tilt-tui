@@ -5,9 +5,11 @@ mod cell;
 mod color;
 mod layout;
 mod length;
+mod limits;
 mod rect;
 mod size;
 mod style;
+mod text;
 
 pub use axis::Axis;
 pub use borders::Borders;
@@ -15,10 +17,12 @@ pub use canvas::Canvas;
 pub use cell::Cell;
 pub use color::Color;
 pub use layout::Layout;
-pub use length::Length;
+pub use length::Len;
+pub use limits::Limits;
 pub use rect::Rect;
 pub use size::Size;
 pub use style::Style;
+pub use text::*;
 
 #[derive(Default)]
 pub enum Alignment {
