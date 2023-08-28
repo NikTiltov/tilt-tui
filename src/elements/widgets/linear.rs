@@ -6,8 +6,8 @@ pub fn linear(axis: Axis) -> Linear {
 
 pub struct Linear {
     children: Vec<Element>,
-    align_main: Alignment,
-    align_cross: Alignment,
+    align_main: Align,
+    align_cross: Align,
     spacing: usize,
     axis: Axis,
 }
@@ -16,8 +16,8 @@ impl Linear {
     pub fn new(axis: Axis) -> Self {
         Self {
             children: Vec::new(),
-            align_main: Alignment::Start,
-            align_cross: Alignment::Start,
+            align_main: Align::Start,
+            align_cross: Align::Start,
             spacing: 0,
             axis,
         }
@@ -38,12 +38,12 @@ impl Linear {
         self
     }
 
-    pub fn align_main(mut self, align: Alignment) -> Self {
+    pub fn align_main(mut self, align: Align) -> Self {
         self.align_main = align;
         self
     }
 
-    pub fn align_cross(mut self, align: Alignment) -> Self {
+    pub fn align_cross(mut self, align: Align) -> Self {
         self.align_cross = align;
         self
     }
@@ -112,18 +112,18 @@ impl Widget for Linear {
 
         let main = limits.max.main(self.axis);
         let main = match self.align_main {
-            Alignment::Start => 0,
-            Alignment::Center => (main - max_main) / 2,
-            Alignment::End => main - max_main,
+            Align::Start => 0,
+            Align::Center => (main - max_main) / 2,
+            Align::End => main - max_main,
         };
         let cross = max_cross;
 
         let mut pos = 0;
         for node in nodes.iter_mut() {
             let cross = match self.align_cross {
-                Alignment::Start => 0,
-                Alignment::Center => (cross - node.size().cross(self.axis)) / 2,
-                Alignment::End => cross - node.size().cross(self.axis),
+                Align::Start => 0,
+                Align::Center => (cross - node.size().cross(self.axis)) / 2,
+                Align::End => cross - node.size().cross(self.axis),
             };
             let (x, y) = Size::new(main + pos, cross).align(self.axis).into();
             node.move_to(x, y);
@@ -135,9 +135,9 @@ impl Widget for Linear {
         Layout::new(limits.clamp(size)).with_children(nodes)
     }
 
-    fn render(&self, layout: &Layout, canvas: &mut Canvas) {
+    fn render(&self, layout: &Layout, renderer: &mut Renderer) {
         for (child, layout) in self.children.iter().zip(layout.children()) {
-            child.render(layout, canvas);
+            child.render(layout, renderer);
         }
     }
 }
