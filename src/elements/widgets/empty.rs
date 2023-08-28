@@ -15,5 +15,5 @@ impl Widget for Empty {
         Layout::new(limits.clamp(Size::new(0, 0)))
     }
 
-    fn render(&self, _layout: &Layout, _canvas: &mut Canvas) {}
+    fn render(&self, _layout: &Layout, _renderer: &mut Renderer) {}
 }

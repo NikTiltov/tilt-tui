@@ -21,10 +21,10 @@ impl Widget for InfoBox {
         self.inner.layout(limits)
     }
 
-    fn render(&self, layout: &Layout, canvas: &mut Canvas) {
-        self.inner.render(layout, canvas);
+    fn render(&self, layout: &Layout, renderer: &mut Renderer) {
+        self.inner.render(layout, renderer);
         let Rect { x, y, w, h } = layout.rect();
-        canvas.draw_str(x, y, &format!("[{}:{} {}:{}]", x, y, w, h));
+        renderer.draw_str(x, y, &format!("[{}:{} {}:{}]", x, y, w, h));
     }
 }
 

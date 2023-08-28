@@ -38,10 +38,10 @@ impl<'a> Widget for Toggle<'a> {
         Layout::new(limits.clamp(size))
     }
 
-    fn render(&self, layout: &Layout, canvas: &mut Canvas) {
+    fn render(&self, layout: &Layout, renderer: &mut Renderer) {
         let rect = layout.rect();
         for (i, char) in self.current_view().chars().enumerate() {
-            canvas.cell_mut(rect.x + i, rect.y).symbol = char;
+            renderer.cell_mut(rect.x + i, rect.y).symbol = char;
         }
     }
 }

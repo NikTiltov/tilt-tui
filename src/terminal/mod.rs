@@ -5,25 +5,25 @@ use backend::Backend;
 
 use crate::{
     events::Event,
-    graphics::{Canvas, Size},
+    graphics::{Renderer, Size},
 };
 
 pub struct Terminal {
     backend: Backend,
-    buffer: Canvas,
+    renderer: Renderer,
 }
 
 impl Terminal {
     pub fn new() -> Self {
         let backend = Backend::new();
-        let buffer = Canvas::empty(backend.size());
-        Self { backend, buffer }
+        let renderer = Renderer::empty(backend.size());
+        Self { backend, renderer }
     }
 
     pub fn event(&mut self) -> Event {
         let event = self.backend.input();
         if let Event::Resize(size) = event {
-            self.buffer = Canvas::empty(size);
+            self.renderer = Renderer::empty(size);
         }
         event
     }
@@ -33,12 +33,12 @@ impl Terminal {
     }
 
     pub fn flush(&mut self) {
-        self.backend.draw(self.buffer.content());
+        self.backend.draw(self.renderer.content());
         self.backend.flush();
-        self.buffer.clear();
+        self.renderer.clear();
     }
 
-    pub fn canvas(&mut self) -> &mut Canvas {
-        &mut self.buffer
+    pub fn renderer(&mut self) -> &mut Renderer {
+        &mut self.renderer
     }
 }

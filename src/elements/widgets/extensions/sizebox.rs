@@ -45,8 +45,8 @@ impl Widget for SizeBox {
         self.inner.layout(Limits::new(min, max))
     }
 
-    fn render(&self, layout: &Layout, canvas: &mut Canvas) {
-        self.inner.render(layout, canvas);
+    fn render(&self, layout: &Layout, renderer: &mut Renderer) {
+        self.inner.render(layout, renderer);
     }
 }
 

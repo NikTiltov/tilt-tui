@@ -39,7 +39,7 @@ impl Widget for Range {
         Layout::new(limits.clamp(Size::new(0, 0)))
     }
 
-    fn render(&self, layout: &Layout, canvas: &mut Canvas) {
+    fn render(&self, layout: &Layout, renderer: &mut Renderer) {
         let rect = layout.rect();
         let size = rect.size();
         let main = (size.main(self.axis) as f64 * self.ratio) as usize;
@@ -47,7 +47,7 @@ impl Widget for Range {
         let (w, h) = Size::new(main, cross).align(self.axis).into();
         for x in 0..w {
             for y in 0..h {
-                canvas.cell_mut(rect.x + x, rect.y + y).bg = self.color;
+                renderer.cell_mut(rect.x + x, rect.y + y).bg = self.color;
             }
         }
     }

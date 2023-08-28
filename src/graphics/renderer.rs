@@ -1,12 +1,12 @@
 use super::{Cell, Size};
 
-pub struct Canvas {
+pub struct Renderer {
     content: Vec<Cell>,
     size: Size,
     cell: Cell,
 }
 
-impl Canvas {
+impl Renderer {
     pub fn empty(size: Size) -> Self {
         Self::filled(size, Cell::default())
     }

@@ -27,8 +27,8 @@ pub trait App: Sized {
         let mut update = true;
         loop {
             if update {
-                let canvas = terminal.canvas();
-                root.render(&layout, canvas);
+                let renderer = terminal.renderer();
+                root.render(&layout, renderer);
                 terminal.flush();
                 update = false;
             }
