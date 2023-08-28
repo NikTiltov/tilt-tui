@@ -6,20 +6,11 @@ pub fn panel(fill: char) -> Panel {
 
 pub struct Panel {
     fill: char,
-    style: Style,
 }
 
 impl Panel {
     pub fn new(fill: char) -> Self {
-        Self {
-            fill,
-            style: Style::default(),
-        }
-    }
-
-    pub fn style(mut self, style: Style) -> Self {
-        self.style = style;
-        self
+        Self { fill }
     }
 }
 
@@ -32,13 +23,11 @@ impl Widget for Panel {
         Layout::new(limits.clamp(Size::new(0, 0)))
     }
 
-    fn render(&self, layout: &Layout, canvas: &mut Canvas) {
+    fn render(&self, layout: &Layout, renderer: &mut Renderer) {
         let rect = layout.rect();
         for y in rect.y..rect.end_y() {
             for x in rect.x..rect.end_x() {
-                let cell = canvas.cell_mut(x, y);
-                cell.set_symbol(self.fill);
-                cell.set_style(self.style);
+                renderer.cell_mut(x, y).set_symbol(self.fill);
             }
         }
     }
