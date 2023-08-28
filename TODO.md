@@ -1,4 +1,5 @@
-[ ] style for widgets
+[ ] Scroll widget
+
 [ ] opacity for color
 [ ] normalize
 [ ] stretch text
