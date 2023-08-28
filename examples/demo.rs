@@ -1,4 +1,4 @@
-use tilt_tui::prelude::*;
+use tilt_tui::{prelude::*, App};
 
 fn main() {
     let _ = simple_logging::log_to_file("log.log", log::LevelFilter::Debug);
@@ -51,17 +51,17 @@ impl App for Counter {
         let progress_bar = range(self.ratio).width(Max).height(2).case();
 
         let tabs = {
-            let align_text = || {
+            let align_text = || -> Element {
                 let text_box = |x, y| {
                     let h = match x {
-                        0 => Alignment::Start,
-                        1 => Alignment::Center,
-                        _ => Alignment::End,
+                        0 => Align::Start,
+                        1 => Align::Center,
+                        _ => Align::End,
                     };
                     let v = match y {
-                        0 => Alignment::Start,
-                        1 => Alignment::Center,
-                        _ => Alignment::End,
+                        0 => Align::Start,
+                        1 => Align::Center,
+                        _ => Align::End,
                     };
                     text("qwe\nrtyui")
                         .align_h(h)
@@ -90,11 +90,11 @@ impl App for Counter {
                     .into()
             };
 
-            let split_view = || {
+            let split_view = || -> Element {
                 let text_view = |name| {
                     text(name)
-                        .align_h(Alignment::Center)
-                        .align_v(Alignment::Center)
+                        .align_h(Align::Center)
+                        .align_v(Align::Center)
                         .width(Max)
                         .height(Max)
                 };
@@ -121,22 +121,42 @@ impl App for Counter {
                 .into()
             };
 
-            let tab_view = || text("tab").width(Max).height(Max).case().into();
-
-            let view: Element = match self.tab_id {
-                0 => align_text(),
-                1 => split_view(),
-                _ => tab_view(),
+            let style_text = || -> Element {
+                let spans = vec![
+                    Span::from(" red \n").fg(Color::CYAN).bg(Color::RED),
+                    Span::from(" green \n").fg(Color::VIOLET).bg(Color::GREEN),
+                    Span::from(" blue \n").fg(Color::BROWN).bg(Color::BLUE),
+                ];
+                text_spans(spans).width(Max).height(Max).case().into()
             };
-            tabs(
-                self.tab_id,
-                tab,
-                ["Text alignment", "Split view", "Tab 3"],
-                view,
-            )
-            .borders(Borders::BOLD)
-            .width(Max)
-            .height(Max)
+
+            let ratio = self.ratio;
+            let canvas_view = move || -> Element {
+                canvas(move |rect, renderer| {
+                    for x in 0..rect.w {
+                        for y in 0..rect.h {
+                            let r = ((x as f64 / rect.w as f64) * 255.0) as u8;
+                            let g = ((y as f64 / rect.h as f64) * 255.0) as u8;
+                            let b = (255 as f64 * ratio) as u8;
+                            renderer.cell_mut(rect.x + x, rect.y + y).bg =
+                                Color::rgb(r, g, b);
+                        }
+                    }
+                })
+                .case()
+                .width(Max)
+                .height(Max)
+                .into()
+            };
+
+            tabs(self.tab_id)
+                .add_tab("Text align", align_text)
+                .add_tab("Split view", split_view)
+                .add_tab("Styled text", style_text)
+                .add_tab("Canvas", canvas_view)
+                .borders(Borders::BOLD)
+                .width(Max)
+                .height(Max)
         };
 
         linear(Axis::V)
@@ -163,10 +183,10 @@ impl App for Counter {
                 self.ratio = (self.ratio - 0.01).max(0.0);
             }
             KeyCode::TAB => {
-                self.tab_id = (self.tab_id + 1) % 3;
+                self.tab_id = (self.tab_id + 1) % 4;
             }
             KeyCode::BACKTAB => {
-                self.tab_id = self.tab_id.wrapping_sub(1).min(2);
+                self.tab_id = self.tab_id.wrapping_sub(1).min(3);
             }
             _ => {}
         }
