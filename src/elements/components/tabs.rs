@@ -1,24 +1,68 @@
 use crate::prelude::*;
 
-pub fn tabs<'a>(
+pub fn tabs<'a>(selected: usize) -> Tabs<'a> {
+    Tabs::new(selected)
+}
+
+struct Tab<'a> {
+    pub name: &'a str,
+    pub view: Box<dyn Fn() -> Element>,
+}
+
+pub struct Tabs<'a> {
     selected: usize,
-    tab: impl Fn(&str, bool) -> Element,
-    tabs: impl IntoIterator<Item = &'a str>,
-    view: impl Into<Element>,
-) -> Element {
-    linear(Axis::V)
-        .child(
-            linear(Axis::H)
-                .spacing(1)
-                .children(
-                    tabs.into_iter()
-                        .enumerate()
-                        .map(|(i, name)| tab(name, i == selected)),
-                )
-                .width(Max),
-        )
-        .child(view)
-        .into()
+    tab_view: Box<dyn Fn(&str, bool) -> Element>,
+    tabs: Vec<Tab<'a>>,
+}
+
+impl<'a> Tabs<'a> {
+    pub fn new(selected: usize) -> Self {
+        Self {
+            selected,
+            tab_view: Box::new(tab),
+            tabs: Vec::new(),
+        }
+    }
+
+    fn view(self) -> Element {
+        linear(Axis::V)
+            .child(
+                linear(Axis::H)
+                    .spacing(1)
+                    .children(self.tabs.iter().enumerate().map(|(i, tab)| {
+                        (self.tab_view)(tab.name, i == self.selected)
+                    }))
+                    .width(Max),
+            )
+            .child((self.tabs[self.selected].view)())
+            .into()
+    }
+
+    pub fn tab_view(
+        mut self,
+        view: impl Fn(&str, bool) -> Element + 'static,
+    ) -> Self {
+        self.tab_view = Box::new(view);
+        self
+    }
+
+    pub fn add_tab(
+        mut self,
+        name: &'a str,
+        view: impl Fn() -> Element + 'static,
+    ) -> Self {
+        self.tabs.push(Tab {
+            name,
+            view: Box::new(view),
+        });
+        self
+    }
+}
+
+impl<'a> From<Tabs<'a>> for Element {
+    fn from(tabs: Tabs<'a>) -> Self {
+        Element::from(tabs.view())
+    }
 }
 
 pub fn tab<'a>(name: &'a str, selected: bool) -> Element {
@@ -29,9 +73,7 @@ pub fn tab<'a>(name: &'a str, selected: bool) -> Element {
         format!("[{:len$}]", &name)
     };
     text(name)
-        .apply_if(selected, |txt| {
-            txt.style(Style::new().fg(Color::BLACK).bg(Color::WHITE))
-        })
+        .apply_if(selected, |txt| txt.fg(Color::BLACK).bg(Color::WHITE))
         .width(len + 2)
         .into()
 }
