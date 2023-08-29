@@ -1,22 +1,22 @@
 use crate::{prelude::*, Widget};
 
-pub fn canvas(draw_fn: impl Fn(Rect, &mut Renderer) + 'static) -> Canvas {
+pub fn canvas<'a>(draw_fn: impl Fn(Rect, &mut Renderer) + 'a) -> Canvas<'a> {
     Canvas::new(draw_fn)
 }
 
-pub struct Canvas {
-    draw_fn: Box<dyn Fn(Rect, &mut Renderer)>,
+pub struct Canvas<'a> {
+    draw_fn: Box<dyn Fn(Rect, &mut Renderer) + 'a>,
 }
 
-impl Canvas {
-    pub fn new(draw_fn: impl Fn(Rect, &mut Renderer) + 'static) -> Self {
+impl<'a> Canvas<'a> {
+    pub fn new(draw_fn: impl Fn(Rect, &mut Renderer) + 'a) -> Self {
         Self {
             draw_fn: Box::new(draw_fn),
         }
     }
 }
 
-impl Widget for Canvas {
+impl<'a> Widget for Canvas<'a> {
     fn size(&self) -> Size<Len> {
         Size::min()
     }
