@@ -6,12 +6,12 @@ pub fn tabs<'a>(selected: usize) -> Tabs<'a> {
 
 struct Tab<'a> {
     pub name: &'a str,
-    pub view: Box<dyn Fn() -> Element>,
+    pub view: Box<dyn Fn() -> Element + 'a>,
 }
 
 pub struct Tabs<'a> {
     selected: usize,
-    tab_view: Box<dyn Fn(&str, bool) -> Element>,
+    tab_view: Box<dyn Fn(&str, bool) -> Element + 'a>,
     tabs: Vec<Tab<'a>>,
 }
 
@@ -40,7 +40,7 @@ impl<'a> Tabs<'a> {
 
     pub fn tab_view(
         mut self,
-        view: impl Fn(&str, bool) -> Element + 'static,
+        view: impl Fn(&str, bool) -> Element + 'a,
     ) -> Self {
         self.tab_view = Box::new(view);
         self
@@ -49,7 +49,7 @@ impl<'a> Tabs<'a> {
     pub fn add_tab(
         mut self,
         name: &'a str,
-        view: impl Fn() -> Element + 'static,
+        view: impl Fn() -> Element + 'a,
     ) -> Self {
         self.tabs.push(Tab {
             name,
