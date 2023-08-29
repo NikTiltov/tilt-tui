@@ -52,7 +52,7 @@ impl<'a> Widget for Textbox<'a> {
 
     fn layout(&self, limits: Limits) -> Layout {
         let text = self.wrap.apply(&self.spans, limits.max.w);
-        let width = text.iter().map(|line| line.len()).max().unwrap();
+        let width = text.iter().map(|line| line.len()).max().unwrap_or(0);
         let height = text.len();
         Layout::new(limits.clamp(Size::new(width, height)))
     }
