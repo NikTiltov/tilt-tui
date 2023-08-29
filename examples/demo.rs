@@ -130,8 +130,8 @@ impl App for Counter {
                 text_spans(spans).width(Max).height(Max).case().into()
             };
 
-            let ratio = self.ratio;
-            let canvas_view = move || -> Element {
+            let canvas_view = || -> Element {
+                let ratio = self.ratio;
                 canvas(move |rect, renderer| {
                     for x in 0..rect.w {
                         for y in 0..rect.h {
