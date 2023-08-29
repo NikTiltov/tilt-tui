@@ -59,6 +59,9 @@ impl<'a> Widget for Textbox<'a> {
 
     fn render(&self, layout: &Layout, renderer: &mut Renderer) {
         let rect = layout.rect();
+        if rect.w * rect.h == 0 {
+            return;
+        }
         let text = self.wrap.apply(&self.spans, rect.w);
         let align_y = match self.align_v {
             Align::Start => 0,
