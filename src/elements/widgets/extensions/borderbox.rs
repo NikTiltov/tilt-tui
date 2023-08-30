@@ -41,17 +41,17 @@ impl Widget for BorderBox {
         let (y_, _y) = (rect.y, rect.end_y());
         if rect.size().area() != 0 {
             for x in x_.._x {
-                renderer.cell_mut(x, y_).symbol = self.borders.top;
-                renderer.cell_mut(x, _y - 1).symbol = self.borders.bottom;
+                renderer.cell_mut(x, y_).ch = self.borders.top;
+                renderer.cell_mut(x, _y - 1).ch = self.borders.bottom;
             }
             for y in y_.._y {
-                renderer.cell_mut(x_, y).symbol = self.borders.left;
-                renderer.cell_mut(_x - 1, y).symbol = self.borders.right;
+                renderer.cell_mut(x_, y).ch = self.borders.left;
+                renderer.cell_mut(_x - 1, y).ch = self.borders.right;
             }
-            renderer.cell_mut(x_, y_).symbol = self.borders.upper_left;
-            renderer.cell_mut(x_, _y - 1).symbol = self.borders.lower_left;
-            renderer.cell_mut(_x - 1, y_).symbol = self.borders.upper_right;
-            renderer.cell_mut(_x - 1, _y - 1).symbol = self.borders.lower_right;
+            renderer.cell_mut(x_, y_).ch = self.borders.upper_left;
+            renderer.cell_mut(x_, _y - 1).ch = self.borders.lower_left;
+            renderer.cell_mut(_x - 1, y_).ch = self.borders.upper_right;
+            renderer.cell_mut(_x - 1, _y - 1).ch = self.borders.lower_right;
         }
         self.inner.render(layout.first_child(), renderer);
     }

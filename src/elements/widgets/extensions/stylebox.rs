@@ -22,6 +22,11 @@ impl StyleBox {
         self.style.bg = Some(color);
         self
     }
+
+    pub fn mods(mut self, mods: CellMods) -> Self {
+        self.style.mods = mods;
+        self
+    }
 }
 
 impl Widget for StyleBox {
@@ -51,6 +56,10 @@ pub trait StyleExt: Into<Element> {
 
     fn bg(self, color: Color) -> StyleBox {
         StyleBox::new(self).bg(color)
+    }
+
+    fn mods(self, mods: CellMods) -> StyleBox {
+        StyleBox::new(self).mods(mods)
     }
 }
 

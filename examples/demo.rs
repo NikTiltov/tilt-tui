@@ -123,9 +123,18 @@ impl App for Counter {
 
             let style_text = || -> Element {
                 let spans = vec![
-                    Span::from(" red \n").fg(Color::CYAN).bg(Color::RED),
-                    Span::from(" green \n").fg(Color::VIOLET).bg(Color::GREEN),
-                    Span::from(" blue \n").fg(Color::BROWN).bg(Color::BLUE),
+                    Span::from(" cyan bold text on red bg \n")
+                        .fg(Color::CYAN)
+                        .bg(Color::RED)
+                        .mods(CellMods::Bold),
+                    Span::from(" violet underlined text on green bg \n")
+                        .fg(Color::VIOLET)
+                        .bg(Color::GREEN)
+                        .mods(CellMods::Underlined),
+                    Span::from(" yellow undercurled text on blue bg \n")
+                        .fg(Color::YELLOW)
+                        .bg(Color::BLUE)
+                        .mods(CellMods::Undercurled),
                 ];
                 text_spans(spans).width(Max).height(Max).case().into()
             };

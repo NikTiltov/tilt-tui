@@ -1,10 +1,9 @@
 use crate::{
+    core::Element,
     events::{Event, KeyEvent},
     graphics::Limits,
     terminal::Terminal,
 };
-
-use super::Element;
 
 pub enum UpdateResult {
     Idle,

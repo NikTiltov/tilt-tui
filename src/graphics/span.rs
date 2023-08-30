@@ -1,6 +1,8 @@
 use crate::graphics::{Color, Style};
 use std::{borrow::Cow, str::Chars};
 
+use super::CellMods;
+
 pub struct Span<'a> {
     content: Cow<'a, str>,
     style: Style,
@@ -23,6 +25,11 @@ impl<'a> Span<'a> {
 
     pub fn bg(mut self, color: Color) -> Self {
         self.style.bg = Some(color);
+        self
+    }
+
+    pub fn mods(mut self, mods: CellMods) -> Self {
+        self.style.mods = mods;
         self
     }
 

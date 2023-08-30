@@ -66,14 +66,14 @@ impl<'a> From<Tabs<'a>> for Element {
 }
 
 pub fn tab<'a>(name: &'a str, selected: bool) -> Element {
-    let len = 14;
-    let name = if name.len() > len {
+    let len = 16;
+    let name = if name.len() > len - 3 {
         format!("[{}...]", &name[..len - 3])
     } else {
         format!("[{:len$}]", &name)
     };
     text(name)
-        .apply_if(selected, |txt| txt.fg(Color::BLACK).bg(Color::WHITE))
+        .apply_if(selected, |txt| txt.mods(CellMods::Reverse))
         .width(len + 2)
         .into()
 }

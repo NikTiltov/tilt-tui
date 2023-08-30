@@ -1,32 +1,23 @@
 use super::{Color, Style};
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Cell {
-    pub symbol: char,
+    pub ch: char,
     pub fg: Color,
     pub bg: Color,
+    pub mods: CellMods,
 }
 
 impl Cell {
-    pub fn set_symbol(&mut self, symbol: char) {
-        self.symbol = symbol;
-    }
-
-    pub fn set_fg(&mut self, color: Color) {
-        self.fg = color;
-    }
-
-    pub fn set_bg(&mut self, color: Color) {
-        self.bg = color;
-    }
-
     pub fn set_style(&mut self, style: Style) {
-        let Style { fg, bg } = style;
-        if let Some(color) = fg {
+        if let Some(color) = style.fg {
             self.fg = color;
         }
-        if let Some(color) = bg {
+        if let Some(color) = style.bg {
             self.bg = color;
+        }
+        if !style.mods.is_empty() {
+            self.mods = style.mods;
         }
     }
 }
@@ -34,9 +25,10 @@ impl Cell {
 impl Default for Cell {
     fn default() -> Self {
         Self {
-            symbol: ' ',
+            ch: ' ',
             fg: Color::WHITE,
             bg: Color::BLACK,
+            mods: CellMods::empty(),
         }
     }
 }
@@ -44,8 +36,21 @@ impl Default for Cell {
 impl From<char> for Cell {
     fn from(value: char) -> Self {
         Self {
-            symbol: value,
+            ch: value,
             ..Default::default()
         }
+    }
+}
+
+bitflags::bitflags! {
+    #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+    pub struct CellMods: u8 {
+        const Bold        = 0b0000_0001;
+        const Italic      = 0b0000_0010;
+        const Underlined  = 0b0000_0100;
+        const Undercurled = 0b0000_1000;
+        const Underdotted = 0b0001_0000;
+        const CrossedOut  = 0b0010_0000;
+        const Reverse     = 0b0100_0000;
     }
 }

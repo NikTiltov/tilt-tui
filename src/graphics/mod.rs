@@ -13,7 +13,7 @@ mod style;
 
 pub use axis::Axis;
 pub use borders::Borders;
-pub use cell::Cell;
+pub use cell::{Cell, CellMods};
 pub use color::Color;
 pub use layout::Layout;
 pub use length::Len;

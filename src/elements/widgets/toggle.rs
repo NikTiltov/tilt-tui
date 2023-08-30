@@ -41,7 +41,7 @@ impl<'a> Widget for Toggle<'a> {
     fn render(&self, layout: &Layout, renderer: &mut Renderer) {
         let rect = layout.rect();
         for (i, char) in self.current_view().chars().enumerate() {
-            renderer.cell_mut(rect.x + i, rect.y).symbol = char;
+            renderer.cell_mut(rect.x + i, rect.y).ch = char;
         }
     }
 }

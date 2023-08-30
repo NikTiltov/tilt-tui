@@ -1,9 +1,10 @@
-use super::Color;
+use super::{CellMods, Color};
 
 #[derive(Debug, Default, Clone, Copy)]
 pub struct Style {
     pub fg: Option<Color>,
     pub bg: Option<Color>,
+    pub mods: CellMods,
 }
 
 impl Style {
@@ -21,14 +22,8 @@ impl Style {
         self
     }
 
-    pub fn merge(self, other: Self) -> Self {
-        Self {
-            fg: self.fg.or(other.fg),
-            bg: self.bg.or(other.bg),
-        }
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.bg.is_none() && self.fg.is_none()
+    pub fn mods(mut self, mods: CellMods) -> Self {
+        self.mods = mods;
+        self
     }
 }

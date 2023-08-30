@@ -27,7 +27,7 @@ impl Widget for Panel {
         let rect = layout.rect();
         for y in rect.y..rect.end_y() {
             for x in rect.x..rect.end_x() {
-                renderer.cell_mut(x, y).set_symbol(self.fill);
+                renderer.cell_mut(x, y).ch = self.fill;
             }
         }
     }

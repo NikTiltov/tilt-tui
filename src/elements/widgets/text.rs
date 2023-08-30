@@ -74,11 +74,11 @@ impl<'a> Widget for Textbox<'a> {
                 Align::Center => rect.w.saturating_sub(line.len()) / 2,
                 Align::End => rect.w.saturating_sub(line.len()),
             };
-            for (x, (char, style)) in line.into_iter().enumerate() {
+            for (x, (ch, style)) in line.into_iter().enumerate() {
                 let i = rect.x + x + align_x;
                 let j = rect.y + y + align_y;
                 let cell = renderer.cell_mut(i, j);
-                cell.set_symbol(char);
+                cell.ch = ch;
                 cell.set_style(style);
             }
         }
