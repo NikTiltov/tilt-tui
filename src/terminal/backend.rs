@@ -3,10 +3,13 @@ use crate::{
     graphics::{Cell, Size},
 };
 use crossterm::{
-    cursor::{Hide, MoveTo, Show},
+    cursor::{Hide, MoveTo},
     event::{self, DisableMouseCapture},
     execute, queue,
-    style::{Print, SetBackgroundColor, SetForegroundColor},
+    style::{
+        Attribute, Print, SetAttribute, SetAttributes, SetBackgroundColor,
+        SetForegroundColor,
+    },
     terminal::{
         self, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen,
     },
@@ -24,7 +27,8 @@ impl Backend {
             stdout,
             EnterAlternateScreen,
             Clear(ClearType::All),
-            DisableMouseCapture
+            DisableMouseCapture,
+            Hide,
         )
         .unwrap();
         terminal::enable_raw_mode().unwrap();
@@ -54,18 +58,18 @@ impl Backend {
     where
         T: IntoIterator<Item = (usize, usize, &'a Cell)>,
     {
-        queue!(self.stdout, Hide).unwrap();
         for (x, y, cell) in content {
             queue!(
                 self.stdout,
                 MoveTo(x as u16, y as u16),
+                SetAttributes(cell.mods.into()),
                 SetForegroundColor(cell.fg.into()),
                 SetBackgroundColor(cell.bg.into()),
-                Print(cell.symbol),
+                Print(cell.ch),
+                SetAttribute(Attribute::Reset),
             )
             .unwrap();
         }
-        queue!(self.stdout, Show).unwrap();
     }
 }
 

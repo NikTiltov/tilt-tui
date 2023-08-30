@@ -23,6 +23,22 @@ impl Renderer {
         }
     }
 
+    pub fn diff<'a>(
+        &'a self,
+        other: &Renderer,
+    ) -> Vec<(usize, usize, &'a Cell)> {
+        let mut diff = Vec::new();
+        let cells = self.content.iter().zip(other.content.iter());
+        for (i, (c1, c2)) in cells.enumerate() {
+            if c1 != c2 {
+                let x = i % self.size.w;
+                let y = i / self.size.w;
+                diff.push((x, y, c1));
+            }
+        }
+        diff
+    }
+
     pub fn content<'a>(&'a self) -> Vec<(usize, usize, &'a Cell)> {
         let mut content = Vec::new();
         for (i, cell) in self.content.iter().enumerate() {
@@ -47,7 +63,7 @@ impl Renderer {
 
     pub fn draw_str(&mut self, x: usize, y: usize, str: &str) {
         for (i, char) in str.chars().enumerate() {
-            self.cell_mut(x + i, y).symbol = char;
+            self.cell_mut(x + i, y).ch = char;
         }
     }
 }

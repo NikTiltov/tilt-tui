@@ -1,16 +1,23 @@
 use crate::{
     events::{Event, KeyCode, KeyEvent, KeyMods},
-    graphics::{Color, Size},
+    graphics::{CellMods, Color, Size},
 };
-use crossterm::{event as ct, style::Color as ctColor};
+use crossterm::{
+    event as ct,
+    style::{Attribute, Attributes, Color as ctColor},
+};
 
 impl TryFrom<ct::Event> for Event {
     type Error = ();
 
     fn try_from(event: ct::Event) -> Result<Self, Self::Error> {
         match event {
-            ct::Event::Key(key_event) => Ok(Event::KeyEvent(key_event.try_into()?)),
-            ct::Event::Resize(w, h) => Ok(Event::Resize(Size::new(w as usize, h as usize))),
+            ct::Event::Key(key_event) => {
+                Ok(Event::KeyEvent(key_event.try_into()?))
+            }
+            ct::Event::Resize(w, h) => {
+                Ok(Event::Resize(Size::new(w as usize, h as usize)))
+            }
             _ => Err(()),
         }
     }
@@ -69,6 +76,38 @@ impl From<Color> for ctColor {
             r: color.r,
             g: color.g,
             b: color.b,
+        }
+    }
+}
+
+impl From<CellMods> for Attributes {
+    fn from(mods: CellMods) -> Self {
+        let mut attr = Attributes::default();
+        for md in mods {
+            attr.set(md.into());
+        }
+        attr
+    }
+}
+
+impl From<CellMods> for Attribute {
+    fn from(mods: CellMods) -> Self {
+        if mods == CellMods::Bold {
+            Attribute::Bold
+        } else if mods == CellMods::Italic {
+            Attribute::Italic
+        } else if mods == CellMods::Underlined {
+            Attribute::Underlined
+        } else if mods == CellMods::Undercurled {
+            Attribute::Undercurled
+        } else if mods == CellMods::Underdotted {
+            Attribute::Underdotted
+        } else if mods == CellMods::CrossedOut {
+            Attribute::CrossedOut
+        } else if mods == CellMods::Reverse {
+            Attribute::Reverse
+        } else {
+            Attribute::Reset
         }
     }
 }
